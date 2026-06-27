@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero form-page">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>Case Design:</h1>
+
+    <div class="form-layout case-design-layout">
+        <div class="form-column left-column">
+            <h2 class="section-subheading">SELECTED BUILD</h2>
+            <div class="case-build-summary">
+                <p>CPU: {{ build.cpu.Model }} (£{{ build.cpu.Price }})</p>
+                <p>GPU: {{ build.gpu.Model }} (£{{ build.gpu.Price }})</p>
+                <p>Motherboard: {{ build.motherboard.Model }} (£{{ build.motherboard.Price }})</p>
+                <p>RAM: {{ build.ram.Model }} (£{{ build.ram.Price }})</p>
+                <p>PSU: {{ build.psu.Model }} (£{{ build.psu.Price }})</p>
+                <div class="metric-group">
+                    <p>Total Price Before Case: <span class="metric-price">£{{ build.total_price }}</span></p>
+                    <p>Logic Score: <span class="metric-score">{{ build.logic_score }}</span></p>
+                    <p>Bottleneck: {{ build.bottleneck }}</p>
+                    <p>Severity: <span class="metric-alert">{{ build.severity }}%</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-column right-column">
+            <form method="post" class="case-picker-form">
+                <label>CHOOSE CASE:</label>
+                <select name="case_id" id="case-select" required>
+                    {% for case in cases %}
+                    <option value="{{ case.Case_ID }}"
+                            data-brand="{{ case.Brand }}"
+                            data-model="{{ case.Model }}"
+                            data-price="{{ case.Price }}"
+                            data-form-factor="{{ case.Form_Factor }}"
+                            data-max-gpu="{{ case.Max_GPU_Length }}"
+                            data-has-fans="{{ case.Has_Fans }}"
+                            {% if chosen_case and chosen_case.Case_ID == case.Case_ID %}selected{% endif %}>
+                        {{ case.Brand|upper }} {{ case.Model|upper }} - £{{ case.Price }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <div class="case-preview-card">
+                    <img id="case-preview-image"
+                         src="{{ url_for('static', filename='assets/cases/case1.png') }}"
+                         alt="Case preview"
+                         class="case-preview-image">
+                    <div class="case-preview-details">
+                        <p><strong id="preview-name">Case preview</strong></p>
+                        <p>Form Factor: <span id="preview-form-factor">-</span></p>
+                        <p>Max GPU Length: <span id="preview-max-gpu">-</span>mm</p>
+                        <p>Has Fans: <span id="preview-has-fans">-</span></p>
+                        <p>Case Price: <span class="metric-price">£<span id="preview-price">-</span></span></p>
+                    </div>
+                </div>
+
+                <button class="primary-button" type="submit">APPLY CASE</button>
+            </form>
+
+            {% if chosen_case %}
+            <div class="case-build-summary selected-case-summary">
+                <h2 class="section-subheading">SELECTED CASE</h2>
+                <p>Case: {{ chosen_case.Brand }} {{ chosen_case.Model }} (£{{ chosen_case.Price }})</p>
+                <p>Form Factor: {{ chosen_case.Form_Factor }}</p>
+                <p>Max GPU Length: {{ chosen_case.Max_GPU_Length }}mm</p>
+                <p>Has Fans: {% if chosen_case.Has_Fans %}Yes{% else %}No{% endif %}</p>
+                <div class="metric-group">
+                    <p>Final Total Price: <span class="metric-price">£{{ final_total_price }}</span></p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="page-caption">CASE DESIGN PAGE</div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const caseSelect = document.getElementById('case-select');
+        const previewImage = document.getElementById('case-preview-image');
+        const previewName = document.getElementById('preview-name');
+        const previewFormFactor = document.getElementById('preview-form-factor');
+        const previewMaxGpu = document.getElementById('preview-max-gpu');
+        const previewHasFans = document.getElementById('preview-has-fans');
+        const previewPrice = document.getElementById('preview-price');
+
+        const caseImagesBasePath = "{{ url_for('static', filename='assets/cases/') }}";
+
+        function getImageFromFormFactor(formFactor) {
+            const value = (formFactor || '').toLowerCase();
+
+            if (value.includes('micro')) {
+                return 'case2.png';
+            }
+
+            if (value.includes('mini') || value.includes('itx')) {
+                return 'case3.png';
+            }
+
+            return 'case1.png';
+        }
+
+        function updatePreview() {
+            const selectedOption = caseSelect.options[caseSelect.selectedIndex];
+
+            const model = selectedOption.dataset.model;
+            const brand = selectedOption.dataset.brand;
+            const formFactor = selectedOption.dataset.formFactor;
+            const filename = getImageFromFormFactor(formFactor);
+
+            previewImage.src = caseImagesBasePath + filename;
+            previewImage.alt = brand + ' ' + model + ' preview';
+            previewName.textContent = brand + ' ' + model;
+            previewFormFactor.textContent = formFactor;
+            previewMaxGpu.textContent = selectedOption.dataset.maxGpu;
+            previewHasFans.textContent = selectedOption.dataset.hasFans === '1' ? 'Yes' : 'No';
+            previewPrice.textContent = selectedOption.dataset.price;
+        }
+
+        if (caseSelect) {
+            caseSelect.addEventListener('change', updatePreview);
+            updatePreview();
+        }
+    });
+</script>
+{% endblock %}

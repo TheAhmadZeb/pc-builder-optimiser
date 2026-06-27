@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero hero-home">
+    <h1>Input Budgets. Select your<br>Games. Let Us Build Your PC</h1>
+    <p>
+        We provide a comprehensive system that provides you the best<br>
+        component combination possibilities for your preferences.
+    </p>
+
+    <div class="home-card-grid">
+        <a class="image-tile" href="{{ url_for('new_build') }}">
+            <img src="{{ url_for('static', filename='assets/home_new_build.png') }}" alt="Create a new build">
+            <span>CREATE A<br>NEW BUILD</span>
+        </a>
+        <a class="image-tile" href="{{ url_for('upgrade') }}">
+            <img src="{{ url_for('static', filename='assets/home_upgrade.png') }}" alt="Upgrade your PC">
+            <span>UPGRADE<br>YOUR PC</span>
+        </a>
+    </div>
+
+    <div class="page-caption">HOMEPAGE</div>
+</section>
+{% endblock %}

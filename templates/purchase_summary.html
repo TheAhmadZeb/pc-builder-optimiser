@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero purchase-page">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>{{ summary.title }}</h1>
+
+    <p>{{ summary.note }}</p>
+
+    <div class="purchase-summary-card">
+        {% for item in summary.components %}
+        <div class="purchase-row">
+            <div>
+                <h2>{{ item.type }}</h2>
+                <p>{{ item.name }}</p>
+                <p>Estimated Price: <span class="metric-price">£{{ item.price }}</span></p>
+            </div>
+            <a class="primary-button purchase-link-button" href="{{ item.purchase_link }}" target="_blank">
+                PURCHASE LINK
+            </a>
+        </div>
+        {% endfor %}
+
+        <div class="purchase-total">
+            <p>Total Estimated Price: <span class="metric-price">£{{ summary.total_price }}</span></p>
+        </div>
+    </div>
+
+    <div class="page-caption">PURCHASE LINKS PAGE</div>
+</section>
+{% endblock %}

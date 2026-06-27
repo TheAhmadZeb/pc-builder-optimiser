@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero form-page">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>Build Upgrade:</h1>
+    <form class="form-layout upgrade-layout" method="post">
+        <div class="form-column left-column">
+            <label>BUDGET:</label>
+            <input type="number" step="0.01" min="50" name="budget" required>
+
+            <label>EXISTING CPU:</label>
+            <select name="cpu_id" required>
+                {% for cpu in cpus %}
+                <option value="{{ cpu.CPU_ID }}">{{ cpu.Model|upper }}</option>
+                {% endfor %}
+            </select>
+
+            <label>EXISTING GPU:</label>
+            <select name="gpu_id" required>
+                {% for gpu in gpus %}
+                <option value="{{ gpu.GPU_ID }}">{{ gpu.Model|upper }}</option>
+                {% endfor %}
+            </select>
+
+            <label>EXISTING RAM:</label>
+            <select name="ram_id" required>
+                {% for ram in ram_modules %}
+                <option value="{{ ram.RAM_ID }}">{{ ram.Model|upper }}</option>
+                {% endfor %}
+            </select>
+
+            <label>EXISTING PSU:</label>
+            <select name="psu_id" required>
+                {% for psu in psus %}
+                <option value="{{ psu.PSU_ID }}">{{ psu.Model|upper }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="form-column right-column compact-right">
+            <div class="upgrade-info-panel">
+                <h2 class="section-subheading">UPGRADE GOAL</h2>
+                <p>
+                    The system recommends upgrade packages that create the largest increase
+                    in Logic Score while staying within your budget.
+                </p>
+                <p>
+                    Game and preset requirements are not used on this page because upgrade
+                    recommendations are based only on Logic Score improvement.
+                </p>
+            </div>
+
+            <button class="primary-button" type="submit">FIND UPGRADES</button>
+        </div>
+    </form>
+    <div class="page-caption">BUILD UPGRADE PAGE</div>
+</section>
+{% endblock %}

@@ -1,0 +1,154 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero results-page">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>Results:</h1>
+
+    {% if builds %}
+        {% if result_type == 'build' %}
+        <form method="post" id="buildSelectionForm">
+        {% endif %}
+
+        <div class="results-grid">
+            {% for build in builds %}
+            <div class="result-card selectable-card" data-index="{{ loop.index0 }}">
+                {% if result_type == 'build' %}
+                <input
+                    type="checkbox"
+                    class="build-checkbox"
+                    name="selected_builds"
+                    value="{{ loop.index0 }}"
+                    id="build_{{ loop.index0 }}"
+                    hidden
+                >
+                {% endif %}
+
+                {% if result_type == 'build' %}
+                <h2>BUILD {{ loop.index }}</h2>
+                <p>CPU: {{ build.cpu.Model }} (£{{ build.cpu.Price }})</p>
+                <p>GPU: {{ build.gpu.Model }} (£{{ build.gpu.Price }})</p>
+                <p>Motherboard: {{ build.motherboard.Model }} (£{{ build.motherboard.Price }})</p>
+                <p>RAM: {{ build.ram.Model }} (£{{ build.ram.Price }})</p>
+                <p>PSU: {{ build.psu.Model }} (£{{ build.psu.Price }})</p>
+                <div class="metric-group">
+                    <p>Total Price: <span class="metric-price">£{{ build.total_price }}</span></p>
+                    <p>Logic Score: <span class="metric-score">{{ build.logic_score }}</span></p>
+                    <p>Bottleneck: {{ build.bottleneck }}</p>
+                    <p>Severity: <span class="metric-alert">{{ build.severity }}%</span></p>
+                </div>
+                {% else %}
+                <h2>UPGRADE {{ loop.index }}</h2>
+                {% if build.components %}
+                    {% for item in build.components %}
+                    <p><strong>{{ item.type }}:</strong> {{ item.component.Model }} (£{{ item.component.Price }})</p>
+                    {% endfor %}
+                {% else %}
+                    <p><strong>{{ build.type }}:</strong> {{ build.component.Model }} (£{{ build.component.Price }})</p>
+                {% endif %}
+                {% if build.psu_upgrade %}
+                <p><strong>PSU:</strong> {{ build.psu_upgrade.Model }} (£{{ build.psu_upgrade.Price }})</p>
+                {% endif %}
+                <div class="metric-group">
+                    <p>Total Upgrade Price: <span class="metric-price">£{{ build.total_price }}</span></p>
+                    <p>New Logic Score: <span class="metric-score">{{ build.score }}</span></p>
+                    <p>Previous Logic Score: {{ build.previous_score }}</p>
+                    <p>Improvement: <span class="metric-score">{{ build.improvement }}</span></p>
+                </div>
+                <form method="post" action="{{ url_for('upgrade_purchase') }}" class="purchase-card-form">
+                    <input type="hidden" name="upgrade_index" value="{{ loop.index0 }}">
+                    <button class="primary-button purchase-button" type="submit">VIEW PURCHASE LINKS</button>
+                </form>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+
+        {% if result_type == 'build' %}
+        <div class="center-action multi-action">
+            <button
+                class="primary-button"
+                type="submit"
+                id="compareButton"
+                formaction="{{ url_for('compare') }}"
+                disabled
+            >
+                COMPARE SELECTED BUILDS
+            </button>
+
+            <button
+                class="primary-button"
+                type="submit"
+                id="caseButton"
+                formaction="{{ url_for('case_design') }}"
+                disabled
+            >
+                PROCEED TO CASE DESIGN
+            </button>
+
+            <p id="selectionHint" class="compare-hint">Select 1 build to continue to case design or 2 builds to compare</p>
+        </div>
+        </form>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const cards = document.querySelectorAll('.selectable-card');
+                const compareButton = document.getElementById('compareButton');
+                const caseButton = document.getElementById('caseButton');
+                const selectionHint = document.getElementById('selectionHint');
+
+                function updateSelectionState() {
+                    const selectedCheckboxes = document.querySelectorAll('.build-checkbox:checked');
+                    const selectedCount = selectedCheckboxes.length;
+
+                    cards.forEach(card => {
+                        const checkbox = card.querySelector('.build-checkbox');
+                        if (checkbox && checkbox.checked) {
+                            card.classList.add('selected-card');
+                        } else {
+                            card.classList.remove('selected-card');
+                        }
+                    });
+
+                    compareButton.disabled = selectedCount !== 2;
+                    caseButton.disabled = selectedCount !== 1;
+
+                    if (selectedCount === 0) {
+                        selectionHint.textContent = 'Select 1 build to continue to case design or 2 builds to compare';
+                    } else if (selectedCount === 1) {
+                        selectionHint.textContent = '1 build selected. You can proceed to case design.';
+                    } else if (selectedCount === 2) {
+                        selectionHint.textContent = '2 builds selected. You can compare them.';
+                    } else {
+                        selectionHint.textContent = 'You can select a maximum of 2 builds.';
+                    }
+                }
+
+                cards.forEach(card => {
+                    const checkbox = card.querySelector('.build-checkbox');
+                    if (!checkbox) return;
+
+                    card.addEventListener('click', function (event) {
+                        if (event.target.tagName === 'INPUT' || event.target.tagName === 'BUTTON' || event.target.tagName === 'A') {
+                            return;
+                        }
+
+                        const selectedCount = document.querySelectorAll('.build-checkbox:checked').length;
+
+                        if (!checkbox.checked && selectedCount >= 2) {
+                            return;
+                        }
+
+                        checkbox.checked = !checkbox.checked;
+                        updateSelectionState();
+                    });
+                });
+
+                updateSelectionState();
+            });
+        </script>
+        {% endif %}
+    {% else %}
+        <div class="empty-state">No valid {{ result_type }} results were found within the pass limit and budget.</div>
+    {% endif %}
+</section>
+{% endblock %}

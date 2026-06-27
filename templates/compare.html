@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero compare-page">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>Compare:</h1>
+
+    <button class="back-btn" type="button" onclick="window.history.back()">← Back</button>
+
+    <div class="compare-grid">
+        <div class="compare-card red-card">
+            <img src="{{ url_for('static', filename='assets/compare_build1.png') }}" alt="Build 1 image">
+            <div class="compare-details">
+                <h2>BUILD 1</h2>
+
+                <p>CPU: {{ comparison.build1.cpu.Model }} (£{{ comparison.build1.cpu.Price }})</p>
+                <p>CPU Performance Score: {{ comparison.build1.cpu.Performance_Score }}</p>
+
+                <p>GPU: {{ comparison.build1.gpu.Model }} (£{{ comparison.build1.gpu.Price }})</p>
+                <p>GPU Performance Score: {{ comparison.build1.gpu.Performance_Score }}</p>
+
+                <p>Motherboard: {{ comparison.build1.motherboard.Model }} (£{{ comparison.build1.motherboard.Price }})</p>
+
+                <p>RAM: {{ comparison.build1.ram.Model }} (£{{ comparison.build1.ram.Price }})</p>
+                <p>RAM Performance Score: {{ comparison.build1.ram.Performance_Score }}</p>
+
+                <p>PSU: {{ comparison.build1.psu.Model }} (£{{ comparison.build1.psu.Price }})</p>
+
+                <div class="metric-group">
+                    <p>Total Price: <span class="metric-price">£{{ comparison.build1.total_price }}</span></p>
+                    <p>Logic Score: <span class="metric-score">{{ comparison.build1.logic_score }}</span></p>
+                    <p>Bottleneck: {{ comparison.build1.bottleneck }}</p>
+                    <p>Severity: <span class="metric-alert">{{ comparison.build1.severity }}%</span></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="compare-card blue-card">
+            <img src="{{ url_for('static', filename='assets/compare_build3.png') }}" alt="Build 2 image">
+            <div class="compare-details">
+                <h2>BUILD 2</h2>
+
+                <p>CPU: {{ comparison.build2.cpu.Model }} (£{{ comparison.build2.cpu.Price }})</p>
+                <p>CPU Performance Score: {{ comparison.build2.cpu.Performance_Score }}</p>
+
+                <p>GPU: {{ comparison.build2.gpu.Model }} (£{{ comparison.build2.gpu.Price }})</p>
+                <p>GPU Performance Score: {{ comparison.build2.gpu.Performance_Score }}</p>
+
+                <p>Motherboard: {{ comparison.build2.motherboard.Model }} (£{{ comparison.build2.motherboard.Price }})</p>
+
+                <p>RAM: {{ comparison.build2.ram.Model }} (£{{ comparison.build2.ram.Price }})</p>
+                <p>RAM Performance Score: {{ comparison.build2.ram.Performance_Score }}</p>
+
+                <p>PSU: {{ comparison.build2.psu.Model }} (£{{ comparison.build2.psu.Price }})</p>
+
+                <div class="metric-group">
+                    <p>Total Price: <span class="metric-price">£{{ comparison.build2.total_price }}</span></p>
+                    <p>Logic Score: <span class="metric-score">{{ comparison.build2.logic_score }}</span></p>
+                    <p>Bottleneck: {{ comparison.build2.bottleneck }}</p>
+                    <p>Severity: <span class="metric-alert">{{ comparison.build2.severity }}%</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="page-caption">COMPARISON</div>
+</section>
+{% endblock %}

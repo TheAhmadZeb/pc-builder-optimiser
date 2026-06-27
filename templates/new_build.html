@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+{% block content %}
+<section class="hero form-page">
+    <button class="back-btn" onclick="window.history.back()">← Back</button>
+    <h1>Build Configuration:</h1>
+    <form class="form-layout" method="post">
+        <div class="form-column left-column">
+            <label>BUDGET:</label>
+            <input type="number" step="0.01" min="100" name="budget" required>
+
+            <label>GAMES:</label>
+            <select name="game_id" id="game-select" required>
+                {% for game in games %}
+                <option value="{{ game.Game_ID }}">{{ game.Game_Title|upper }}</option>
+                {% endfor %}
+            </select>
+
+            <label>QUALITY PRESET:</label>
+            <div class="preset-list">
+                <label><input type="radio" name="preset" value="ULTRA" checked> ULTRA</label>
+                <label><input type="radio" name="preset" value="HIGH"> HIGH</label>
+                <label><input type="radio" name="preset" value="MEDIUM"> MEDIUM</label>
+                <label><input type="radio" name="preset" value="LOW"> LOW</label>
+            </div>
+
+            <button class="primary-button" type="submit">GENERATE BUILDS</button>
+        </div>
+        <div class="form-column right-column">
+            <img
+                class="feature-poster"
+                id="game-poster"
+                src="{{ url_for('static', filename='assets/games/fortnite.png') }}"
+                data-game-image-base="{{ url_for('static', filename='assets/games/') }}"
+                alt="Selected game poster"
+            >
+        </div>
+    </form>
+    <div class="page-caption">NEW BUILD CONFIG PAGE</div>
+</section>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+{% endblock %}
